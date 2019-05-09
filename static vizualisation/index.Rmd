@@ -1,0 +1,72 @@
+---
+title: "Report"
+author: "Soham Ghose"
+date: "February 28, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("analysis.R")
+```
+
+# Data Overview
+
+The data set used in this report contains yearly data on forest coverage (in sq.km) , forest coverage (percentage of land area) , GDP(in USD with 2010 as the base year) , agricultural land (in sq.km) and agricultultural land (as a percent of land area). All the data is sorted by Country. 
+
+## Change in the average forested area over time(1992-2016)
+
+The graph below shows the change in the average forested area in a country from 1992 to 2016. It is evident in the graph that the average forest coverage has been sharply declining. It starts at little under 188,000 sq.km in 1992 and drops to a little under 183,500 (sq.km) in 2010. The rate of decrease seems to reduce in 2002. The trend is very similar from 2011 to 2016 but the absolute values are higher. This might be because of data for some countries was not available before 2010 thereby pulling down the average for all years before 2010. 
+
+```{r plot1, echo=FALSE}
+ggplot(data = total_forest_by_year) + 
+  labs(title = "average forested area over time(1992-2016)") +
+  geom_point(mapping = aes(x = year , y = total_forest_area)) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+
+## Changes in agricultural land(as a percentage of land area) of certain countries over the years.
+
+The graph below shows the change in agricultural land(as a percent of land area) for selected countries from 1992 to 2016.
+The countries were selected based on GDP gaps. The United states and China are High GDP countries. While India, Mexico and Brazil are middle GDP countries while Haiti was included to represent countries in the Lowest GDP bracket. 
+China and Mexico and India have had relatively constant levels of agriculture since 1992 while brazil's ariculture level have been steadily on the rise. The United states however, has seen a marginal decline in its agricultural levels. 
+
+
+```{r pressure, echo=FALSE}
+ggplot(data = tot_agri_perc_vs_time, aes(  x = year , y = log10(`Agricultural land (% of land area)`) , color = Country.Name)) +
+  labs(title = "Agricultural land(as a percentage of land area) of certain countries over the years") +
+  geom_point() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+## Visualising agricultural land(as percentage of land area) vs GDP per capita for certain countries
+
+The plot below shows the relationshiop between the agricultural area of a country and its GDP for four different years. Each point on the scatters plot is a country. The four years(1992, 2000, 2010, 2016) were selected to roughly represent each decade. My initial hypothesis was that countries with lower per capita GDP would have higher agricultural land. It does appear that this is the case however it is not as evident as I had initially imagined. The result can be determined with more complex statistical methods. 
+
+
+```{r plot3, echo=FALSE, warning=FALSE}
+ggplot(data = tot_agri_perc_vs_gdp, aes(log(GDP_per_capita) ,  `Agricultural land (% of land area)` )) +
+geom_point() +
+labs(title = "Agricultural land(as percentage of land area) vs GDP per capita") +
+facet_wrap(~ year)
+```
+
+
+
+# Visualising the change in forest land(as a percent of land area) are from 1992 to 2016 on a map of the world
+
+The graphic below shows the change in forest cover in different countries from 1992 to 2016.The ranges are divided based on 5 quantiles so that every range has the same number of entries.The map is color coded.  Red and Orange imply a decrease in forest cover while Green and Light Green imply an increase. Parts of the world that are water bodies are greyed out. From the visual it is evident that South America and Southern Africa have seen a lot of deforestation while India and China have seen the most reforestation. Good Job India and China! 
+
+
+```{r plot4, echo=FALSE , warning=FALSE}
+ggplot(data = world_forest_map) +
+  geom_polygon(mapping = aes(x = long, y = lat, group = group, fill = `Percentage change`)) +
+  scale_fill_brewer(palette = "RdYlGn") +
+  labs(title = "Change in forest cover as a percentage of a country's land area(1992 - 2016)" , x = "", y = "" , fill = "change") +
+  coord_quickmap() +
+  theme(legend.position = "bottom")
+```
+
+
+
